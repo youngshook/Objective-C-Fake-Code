@@ -6,7 +6,7 @@ Objective-C Fake Code
 
 #### 1.1 Creating String Representations for Enumerated Type
 
-``` objc Creating String Representations for Enumerated Type
+```objective-c
 ￼NSString * const UITableViewCellStyleDescription[] = { 
 	[UITableViewCellStyleDefault] = @"Default",
 	[UITableViewCellStyleSubtitle] = @"Subtitle",
@@ -19,17 +19,21 @@ NSString *description = UITableViewCellStyleDescription[style];
 
 #### 1.2 Adding a Property to a Category
 
+* NSObject+AssociatedObject.h
 
-``` objc NSObject+AssociatedObject.h
+``` objc 
 @interface NSObject (AssociatedObject)
-@property (nonatomic, strong) id associatedObject; @end
+@property (nonatomic, strong) id associatedObject;
+@end
 ```
 
-``` objc NSObject+AssociatedObject.m
+*  NSObject+AssociatedObject.m
+
+``` objc
 @implementation NSObject (AssociatedObject)
 @dynamic associatedObject;
 - (void)setAssociatedObject:(id)object {
-	objc_setAssociatedObject(self, @selector(associatedObject), 	object,OBJC_ASSOCIATION_RETAIN_NONATOMIC); 
+	objc_setAssociatedObject(self, @selector(associatedObject), object, OBJC_ASSOCIATION_RETAIN_NONATOMIC); 
 }
 - (id)associatedObject {
 	return objc_getAssociatedObject(self, @selector(associatedObject));
@@ -38,7 +42,7 @@ NSString *description = UITableViewCellStyleDescription[style];
 
 #### 1.3 Swizzling a Method
 
-``` objc Swizzling a Method
+``` objc
 #import <objc/runtime.h>
 @implementation UIViewController (Tracking)
 
@@ -71,7 +75,7 @@ NSString *description = UITableViewCellStyleDescription[style];
 
 #### 1.4 Determining the Type of a Property
 
-``` objc Determining the Type of a Property
+``` objc
 const char *attributes = property_getAttributes(class_getProperty([self  class], sel_getName(@selector(property))));
 NSString *typeAttribute = [[[NSString stringWithUTF8String:attributes]  componentsSeparatedByString:@","] firstObject];
 const char *propertyType = [[typeAttribute substringFromIndex:1] UTF8String];
@@ -84,7 +88,7 @@ if (strcmp(propertyType, @encode(float)) == 0) {
 
 #### 1.5 Specifying the Availability of a Method
 
-``` objc Specifying the Availability of a Method
+``` objc
 void foo() __attribute__((availability(macosx, introduced=10.4,
                                            deprecated=10.6,
                                            obsoleted=10.7)));
@@ -92,7 +96,7 @@ void foo() __attribute__((availability(macosx, introduced=10.4,
 
 #### 1.6 Hiding a Class
 
-``` objc Hiding a Class
+``` objc
 __attribute__((visibility("hidden"))
 @interface HiddenClass : Superclass // ...
 @end
@@ -100,7 +104,7 @@ __attribute__((visibility("hidden"))
 
 #### 1.7 Hiding a Method
 
-``` objc Hiding a Method
+``` objc
 - (BOOL)respondsToSelector:(SEL)selector {
     if (selector == @selector(methodToHide)) {
         return NO; }
@@ -110,7 +114,7 @@ __attribute__((visibility("hidden"))
 
 #### 1.8 Ignoring Compiler Warnings
 
-``` objc Ignoring Compiler Warnings
+``` objc
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wgnu" id object = object ?: [NSNull null];
 #pragma clang diagnostic pop
@@ -118,7 +122,7 @@ __attribute__((visibility("hidden"))
 
 #### 1.9 Determining the Current System Memory Usage
 
-``` objc Determining the Current System Memory Usage
+``` objc
 #import <mach/mach.h>
 #import <sys/sysctl.h>
 vm_statistics_data_t vmStats;
@@ -132,7 +136,7 @@ if (status == KERN_SUCCESS) {
 
 #### 1.10 Creating Variadic Method
 
-``` objc Creating Variadic Method
+``` objc
 - (void)method:(id)object, ... NS_REQUIRES_NIL_TERMINATION { va_list args;
     va_start(args, object);
     while (object) {
@@ -145,7 +149,7 @@ if (status == KERN_SUCCESS) {
 
 #### 1.11 Creating a Variadic Function 
 
-``` objc Creating a Variadic Function
+``` objc
 static double average(int count, ...) {
     va_list args;
     va_start(args, count);
@@ -161,7 +165,7 @@ double avg = average(4, 2, 3, 4, 5);
 
 #### 1.12 Overloading Functions
 
-``` objc Overloading Functions
+``` objc
 #include <math.h>
 __attribute__((overloadable)) CGFloat CGFloat_floor(double d) {
     return (CGFloat)floor(d);
@@ -184,7 +188,7 @@ long double __attribute__((overloadable)) tgsin(long double x) {
 #### 1.13 Conditionally Compiling for iOS & OS X Targets
 
 
-``` objc Conditionally Compiling for iOS & OS X Targets
+``` objc
 #import <Availability.h>
 id color = nil;
 #if defined(__MAC_OS_X_VERSION_MAX_ALLOWED)
@@ -196,7 +200,7 @@ color = [UIColor purpleColor];
 
 #### 1.14 Requiring Method to call super
 
-``` objc Requiring Method to call super
+``` objc
 - (void)method __attribute__((objc_requires_super));
 ```
 
@@ -206,7 +210,7 @@ color = [UIColor purpleColor];
 | ----- |:---------:| ------:| -----:| --------:| ----:|
 | 1     |   UIKit   | 0x004f | UIKit | Function |  32 
 
-``` objc Determining the Caller of a Method
+``` objc
 NSString *callerSymbol = [NSThread callStackSymbols][1];
 NSCharacterSet *characterSet = [NSCharacterSet characterSetWithCharactersInString:@" +,-.?[]"];
 NSArray *components = [callerSymbol componentsSeparatedByCharactersInSet:characterSet];
@@ -221,7 +225,7 @@ NSString *lineCaller = components[5];
 
 #### 1.16 Intentionally Crashing the Current Process
 
-``` objc Intentionally Crashing the Current Process
+``` objc
 __builtin_trap();
 ```
 
@@ -231,7 +235,7 @@ __builtin_trap();
 
 #### 2.1 Benchmarking the Execution Time of an operation
 
-``` objc Benchmarking the Execution Time of an operation
+``` objc
 extern uint64_t dispatch_benchmark(size_t count, void (^block)(void))...----
 size_t const objectCount = 1000;
 uint64_t t = dispatch_benchmark(10000, ^{
@@ -247,7 +251,7 @@ NSLog(@"-[NSMutableArray addObject:] : %llu ns", t);
 
 #### 2.2 Dispatching a Timer
 
-``` objc Dispatching a Timer
+``` objc
 dispatch_queue_t queue = dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
 dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
 int64_t delay = 30 * NSEC_PER_SEC;
@@ -261,7 +265,7 @@ dispatch_resume(timer);
 
 #### 2.3 Monitoring Local File Changes
 
-``` objc Monitoring Local File Changes
+``` objc
 NSURL *fileURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory
        inDomains:NSUserDomainMask] firstObject];
 dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -289,7 +293,7 @@ dispatch_resume(source);
 
 #### 3.1 Creating a Random Integer
 
-``` objc Creating a Random Integer
+``` objc
 // Random int between 0 and N - 1
 NSUInteger r = arc4random_uniform(N);
 // Random int between 1 and N
@@ -298,7 +302,7 @@ NSUInteger r = arc4random_uniform(N) + 1;
 
 #### 3.2 Creating a Random Double
 
-``` objc Creating a Random Double
+``` objc
 srand48(time(0));
 double r = drand48();
 
@@ -312,13 +316,13 @@ UIColor *color = [UIColor colorWithRed:drand48()
 
 #### 3.3 Creating a Random String
 
-``` objc Creating a Random String
+``` objc
 NSString *letter = [NSString stringWithFormat:@"%c", arc4random_uniform(26) + ’a’];
 ```
 
 #### 3.4 Creating a Random Date
 
-``` objc Creating a Random Date
+``` objc
 NSTimeInterval timeInterval = (NSTimeInterval)arc4random_uniform(pow(2.0, 32.0) - 1.0);
 NSDate *date = [NSDate dateWithTimeIntervalSinceReferenceDate:timeInterval];
 ```
@@ -329,7 +333,7 @@ NSDate *date = [NSDate dateWithTimeIntervalSinceReferenceDate:timeInterval];
 
 #### 4.1 Accessing Mutable Dictionary in a Thread-Safe Manner
 
-``` objc Accessing Mutable Dictionary in a Thread-Safe Manner
+``` objc
 @property NSMutableDictionary *mutableDictionary;
 @property dispatch_queue_t queue;
 - (void)setObject:(id)object
@@ -342,14 +346,14 @@ NSDate *date = [NSDate dateWithTimeIntervalSinceReferenceDate:timeInterval];
 
 #### 4.2 Reversing an Array
 
-``` objc Reversing an Array
+``` objc
 NSArray *array = ...;
 NSArray *reversed = [[array reverseObjectEnumerator] allObjects];
 ```
 
 #### 4.3 Filtering Objects in Array by Class
 
-``` objc Filtering Objects in Array by Class
+``` objc
 NSArray *mixedArray = @[@"a", @"b", @"c", @(1), @(2), @(3)];
 NSPredicate *predicate = [NSPredicate predicateWithFormat:@"self isKindOfClass: %@", [NSString class]];
 NSArray *letters = [mixedArray filteredArrayUsingPredicate:predicate];
@@ -357,24 +361,24 @@ NSArray *letters = [mixedArray filteredArrayUsingPredicate:predicate];
 
 #### 4.4 Computing the Sum of an Array
 
-``` objc Computing the Sum of an Array
+``` objc
 NSArray *array = @[@1, @2, @3];
 NSNumber *sum = [array valueForKeyPath:@"@sum.self"];
 ```
 
 #### 4.5 Removing Duplicate Objects from an Array
 
-``` objc  Using KVC Collection Operator
+``` objc
 NSArray *array = @[@"a", @"b", @"c", @"a", @"d"];
 NSArray *uniqueArray = [array valueForKeyPath:@"@distinctUnionOfObjects.self"];
 ```
 
-``` objc  Using NSSet
+``` objc
 NSSet *set = [NSSet setWithArray:array]; 
 NSArray *uniqueArray = [set allObjects];
 ```
 
-``` objc  Using NSOrderedSet
+``` objc
 NSOrderedSet *orderedSet = [NSOrderedSet orderedSetWithArray:array];
 NSArray *uniqueArray = [orderedSet array];
 ```
@@ -385,19 +389,19 @@ NSArray *uniqueArray = [orderedSet array];
 
 #### 5.1 Converting Degrees to Radians
 
-``` objc Converting Degrees to Radians
+``` objc
 double radians = degrees * M_PI / 180.0f;
 ```
 
 #### 5.2 Converting Radians to Degrees
 
-``` objc Converting Radians to Degrees
+``` objc
 double degrees = radians * 180.0f / M_PI;
 ```
 
 #### 5.3 Convert Radians to CLLocationDirection
 
-``` objc Convert Radians to CLLocationDirection
+``` objc
 CLLocationDirection direction = fmod(degrees, 360.0f) + 90.0f;
 ```
 
@@ -407,7 +411,7 @@ CLLocationDirection direction = fmod(degrees, 360.0f) + 90.0f;
 
 #### 6.1 Animating a CAGradientLayer
 
-``` objc Animating a CAGradientLayer
+``` objc
 NSArray *colors = @[(id)[[UIColor redColor] CGColor], (id)[[UIColor orangeColor] CGColor]];
 NSArray *locations = @[@(0.0), @(1.0)]; NSTimeInterval duration = 1.0f;
 [UIView animateWithDuration:duration animations:^{
@@ -439,7 +443,7 @@ NSArray *locations = @[@(0.0), @(1.0)]; NSTimeInterval duration = 1.0f;
 
 #### 6.2 Creating an Image for a Swatch of Color
 
-``` objc Creating an Image for a Swatch of Color
+``` objc
 static UIImage * UIImageForSwatchOfColorWithSize(UIColor *color, CGSize size)
 {
     UIImage *image = nil;
@@ -455,7 +459,7 @@ static UIImage * UIImageForSwatchOfColorWithSize(UIColor *color, CGSize size)
 
 #### 6.3 Getting Color RGB Components
 
-``` objc Getting Color RGB Components
+``` objc
 UIColor *color = ...;
 CGFloat r, g, b, a;
 [color getRed:&r green:&g blue:&b alpha:&a];
@@ -467,7 +471,7 @@ CGFloat r, g, b, a;
 
 #### 7.1 Creating a Snapshot of a View
 
-``` objc Creating a Snapshot of a View
+``` objc
 UIView *view = ...;
 double scale = [[UIScreen mainScreen] scale];
 UIImage *snapshot = nil;
@@ -484,7 +488,7 @@ UIGraphicsEndImageContext();
 
 #### 7.2 Determining if UIViewController is Visible
 
-``` objc Determining if UIViewController is Visible
+``` objc
 - (BOOL)isVisible {
 	return [self isViewLoaded] && self.view.window;
 }
@@ -492,7 +496,7 @@ UIGraphicsEndImageContext();
 
 #### 7.3 Removing Drop Shadow from UIWebView
 
-``` objc Removing Drop Shadow from UIWebView
+``` objc
 for (UIView *view in [[[webView subviews] objectAtIndex:0] subviews]) {
     if ([view isKindOfClass:[UIImageView class]] && view.frame.size.width == 1.0f) {
               view.hidden = YES;
@@ -502,7 +506,7 @@ for (UIView *view in [[[webView subviews] objectAtIndex:0] subviews]) {
 
 #### 7.4 Making a Device Vibrate
 
-``` objc Making a Device Vibrate
+``` objc
 @import AudioToolbox;
 // Plays an alert noise if vibration not supported on device
 AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);
